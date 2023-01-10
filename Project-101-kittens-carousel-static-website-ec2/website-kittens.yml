@@ -7,7 +7,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable HTTP and SSH for webserver
-      GroupName: WebserverSecGrp
+      GroupName: ak-webapp-Sec-Grp
       SecurityGroupIngress:
         - IpProtocol: tcp
           FromPort: 22
@@ -25,7 +25,7 @@ Resources:
       InstanceType: t2.micro
       KeyName: AdminNodehouse
       SecurityGroupIds:
-        - !Ref WebserverSecGrp
+        - !Ref ak-webapp-Sec-Grp
       Tags:
         - Key: Name
           Value: Webapp-kittens
