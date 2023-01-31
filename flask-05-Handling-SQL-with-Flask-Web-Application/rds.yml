@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: |
+  Create Security Group and MySQL RDS database
+  
+Parameters:
+  
+  pDBName:
+    Description: Database Name
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: '/clarusway/dbname'
+  
+  pDBPassword:
+    Description: Database Password
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: '/clarusway/password'
+
+Resources:
+  
+  rMySQLdbSecGrp:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Database security group for MySQL port 3306
+      GroupName: ak-rds-mysql-sec-grp
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
+      Tags: 
+        - Key: "Name"
+          Value: "ak-rds-mysql-sec-grp"
+
+  rMYSQLDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: "20"
+      AllowMajorVersionUpgrade: false
+      AutoMinorVersionUpgrade: true
+      DBInstanceIdentifier: emailapplication
+      DBInstanceClass: db.t2.micro
+      DBName: !Ref pDBName
+      Engine: mysql
+      MasterUserPassword: !Ref pDBPassword
+      MasterUsername: admin
+      Port: "3306"
+      PubliclyAccessible: true
+      StorageType: gp2 
+      Tags:
+        - Key: "Name"
+          Value: "ak-rds-mysql"
+      VPCSecurityGroups:
+        - !GetAtt  rMySQLdbSecGrp.GroupId
+
+#Outputs:
